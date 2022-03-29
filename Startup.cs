@@ -31,7 +31,11 @@ namespace Prueba.Backend
             services.AddDbContext<OFELIAContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("OFELIAContext")));
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new Utils.IntToStringConverter());
+                options.JsonSerializerOptions.Converters.Add(new Utils.DecimalToStringConverter());
+            });
 
             services.AddCors(options =>
             {

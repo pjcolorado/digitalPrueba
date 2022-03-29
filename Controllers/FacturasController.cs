@@ -24,7 +24,7 @@ namespace Prueba.Backend.Controllers
             Respuesta resp = new Respuesta();
             try
             {
-                var lista = db.TblProductos.ToList();
+                var lista = db.TblFacturas.ToList();
                 resp.Exito = 1;
                 resp.Data = lista;
             }
@@ -42,9 +42,31 @@ namespace Prueba.Backend.Controllers
             Respuesta resp = new Respuesta();
             try
             {
-                var lista = db.TblProductos.Find(id);
+                FacturaDto fact = new FacturaDto();
+                FacturaProductoDto item = new FacturaProductoDto();
+                var obj = db.TblFacturas.Find(id);
+                if (obj != null)
+                {
+                    fact.Id = Convert.ToInt32(obj.Id);
+                    fact.IdCliente = obj.IdCliente;
+                    fact.TotalVenta = obj.TotalVenta;
+                    fact.Fecha = obj.Fecha;
+
+                    foreach (var prod in db.TblFacturaProductos.Where(x => x.IdFactura.Equals(obj.Id)).ToList())
+                    {
+                        item = new FacturaProductoDto();
+                        item.Id = prod.Id;
+                        item.IdFactura = prod.IdFactura;
+                        item.IdProducto = prod.IdProducto;
+                        item.Cantidad = prod.Cantidad;
+                        item.ValorUnitario = prod.ValorUnitario;
+                        item.ValorTotal = prod.ValorTotal;
+                        fact.detalles.Add(item);
+                    }
+                }
+
                 resp.Exito = 1;
-                resp.Data = lista;
+                resp.Data = fact;
             }
             catch (Exception ex)
             {
@@ -80,7 +102,7 @@ namespace Prueba.Backend.Controllers
                     db.Add(detalle);
                 }
                 db.SaveChanges();
-
+                resp.Exito = 1;
             }
             catch (Exception ex)
             {

@@ -7,7 +7,7 @@ namespace Prueba.Backend.Models
 {
     public class FacturaDto
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
         public DateTime Fecha { get; set; }
         public int IdCliente { get; set; }
         public decimal TotalVenta { get; set; }
