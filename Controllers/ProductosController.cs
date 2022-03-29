@@ -19,16 +19,39 @@ namespace Prueba.Backend.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<TblProducto> GetProductos()
+        public IActionResult Get()
         {
-            return db.TblProductos.ToList();
+            Respuesta resp = new Respuesta();
+            try
+            {
+                var lista = db.TblProductos.ToList();
+                resp.Exito = 1;
+                resp.Data = lista;
+            }
+            catch (Exception ex)
+            {
+                resp.Mensaje = ex.Message;
+                throw;
+            }
+            return Ok(resp);
         }
 
         [HttpGet("{id}")]
-        public TblProducto GetProducto(int id)
+        public IActionResult Get(int id)
         {
-            TblProducto retorno = db.TblProductos.Find(id);
-            return retorno;
+            Respuesta resp = new Respuesta();
+            try
+            {
+                var lista = db.TblProductos.Find(id);
+                resp.Exito = 1;
+                resp.Data = lista;
+            }
+            catch (Exception ex)
+            {
+                resp.Mensaje = ex.Message;
+                throw;
+            }
+            return Ok(resp);
         }
     }
 }

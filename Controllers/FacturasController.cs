@@ -19,29 +19,76 @@ namespace Prueba.Backend.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<TblFactura> Get()
+        public IActionResult Get()
         {
-            return db.TblFacturas.ToList();
+            Respuesta resp = new Respuesta();
+            try
+            {
+                var lista = db.TblProductos.ToList();
+                resp.Exito = 1;
+                resp.Data = lista;
+            }
+            catch (Exception ex)
+            {
+                resp.Mensaje = ex.Message;
+                throw;
+            }
+            return Ok(resp);
         }
 
         [HttpGet("{id}")]
-        public TblFactura GetFactura(long id)
+        public IActionResult GetFactura(long id)
         {
-            TblFactura retorno = db.TblFacturas.Find(id);
-            return retorno;
+            Respuesta resp = new Respuesta();
+            try
+            {
+                var lista = db.TblProductos.Find(id);
+                resp.Exito = 1;
+                resp.Data = lista;
+            }
+            catch (Exception ex)
+            {
+                resp.Mensaje = ex.Message;
+                throw;
+            }
+            return Ok(resp);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public string Post(TblFactura factura)
+        public IActionResult Post(FacturaDto factura)
         {
-            db.Add(factura);
-            db.SaveChanges();
+            Respuesta resp = new Respuesta();
+            try
+            {
+                TblFactura nuevo = new TblFactura();
+                nuevo.IdCliente = factura.IdCliente;
+                nuevo.Fecha = System.DateTime.Now;
+                nuevo.TotalVenta = factura.TotalVenta;
 
-            db.Add(factura.TblFacturaProductos);
-            db.SaveChanges();
+                db.Add(nuevo);
+                db.SaveChanges();
 
-            return factura.Id.ToString();
+                TblFacturaProducto detalle;
+                foreach (var item in factura.detalles)
+                {
+                    detalle = new TblFacturaProducto();
+                    detalle.IdProducto = item.IdProducto;
+                    detalle.Cantidad = item.Cantidad;
+                    detalle.ValorUnitario = item.ValorUnitario;
+                    detalle.ValorTotal = item.ValorTotal;
+                    detalle.IdFactura = nuevo.Id;
+                    db.Add(detalle);
+                }
+                db.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                resp.Mensaje = ex.Message;
+            }
+
+            return Ok(resp);
         }
+
     }
 }

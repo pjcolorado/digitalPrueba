@@ -20,31 +20,62 @@ namespace Prueba.Backend.Controllers
             db = context;
         }
 
-
         [HttpGet]
-        public IEnumerable<TblCliente> GetClientes()
+        public IActionResult Get()
         {
-            return db.TblClientes.ToList();
+            Respuesta resp = new Respuesta();
+            try
+            {
+                var lista = db.TblClientes.ToList();
+                resp.Exito = 1;
+                resp.Data = lista;
+            }
+            catch (Exception ex)
+            {
+                resp.Mensaje = ex.Message;
+                throw;
+            }
+            return Ok(resp);
         }
 
         [HttpGet("{id}")]
-        public TblCliente GetCliente(int id)
+        public IActionResult Get(int id)
         {
-            TblCliente retorno = db.TblClientes.Find(id);
-            return retorno;
+            Respuesta resp = new Respuesta();
+            try
+            {
+                var lista = db.TblClientes.Find(id);
+                resp.Exito = 1;
+                resp.Data = lista;
+            }
+            catch (Exception ex)
+            {
+                resp.Mensaje = ex.Message;
+                throw;
+            }
+            return Ok(resp);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public string Post(TblCliente cliente)
+        public IActionResult Add(ClienteDto cliente)
         {
-            if (cliente != null)
+            Respuesta resp = new Respuesta();
+            try
             {
                 db.Add(cliente);
                 db.SaveChanges();
+                resp.Exito = 1;
             }
-            return cliente.Id.ToString();
+            catch (Exception ex)
+            {
+                resp.Mensaje = ex.Message;
+                throw;
+            }
+            return Ok(resp);
+
         }
+
+        
 
     }
 }
