@@ -82,6 +82,9 @@ namespace Prueba.Backend.Controllers
             Respuesta resp = new Respuesta();
             try
             {
+                if (factura.detalles == null || factura.detalles.Count == 0)
+                    throw new Exception("No hay detalles de productos");
+
                 TblFactura nuevo = new TblFactura();
                 nuevo.IdCliente = factura.IdCliente;
                 nuevo.Fecha = System.DateTime.Now;
@@ -103,6 +106,7 @@ namespace Prueba.Backend.Controllers
                 }
                 db.SaveChanges();
                 resp.Exito = 1;
+                resp.Mensaje = string.Format("Se generó la factura {0}", nuevo.Id.ToString());
             }
             catch (Exception ex)
             {
